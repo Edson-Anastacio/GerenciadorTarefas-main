@@ -35,6 +35,7 @@ public class MainController {
         colPrioridade.setCellValueFactory(cell -> cell.getValue().prioridadeProperty());
         colConcluida.setCellValueFactory(new PropertyValueFactory<>("concluida"));
 
+        // Carrega a lista que vem do Banco (via Service)
         filtered = new FilteredList<>(service.getTasks(), t -> true);
         table.setItems(filtered);
 
@@ -42,13 +43,12 @@ public class MainController {
         filterCombo.setValue("Todas");
         filterCombo.valueProperty().addListener((obs, oldV, newV) -> applyFilter(newV));
 
-        // desabilitar botões quando não houver seleção
+        // Desabilitar botões quando não houver seleção
         btnEditar.disableProperty().bind(Bindings.isNull(table.getSelectionModel().selectedItemProperty()));
         btnRemover.disableProperty().bind(Bindings.isNull(table.getSelectionModel().selectedItemProperty()));
         btnToggleConcluida.disableProperty().bind(Bindings.isNull(table.getSelectionModel().selectedItemProperty()));
 
-        // --- CORREÇÃO AQUI EMBAIXO ---
-        // Adicionamos <Task, Boolean> dentro do TableCell
+        // Checkbox Visual na Tabela
         colConcluida.setCellFactory(tc -> new TableCell<Task, Boolean>() {
             @Override
             protected void updateItem(Boolean concluida, boolean empty) {
@@ -57,8 +57,7 @@ public class MainController {
                     setGraphic(null);
                 } else {
                     CheckBox cb = new CheckBox();
-                    cb.setDisable(true); // Checkbox apenas visual
-                    // Verifica se não é nulo para evitar erro
+                    cb.setDisable(true); // Apenas visual
                     cb.setSelected(concluida != null && concluida);
                     setGraphic(cb);
                 }
@@ -82,25 +81,38 @@ public class MainController {
     @FXML
     public void onAdicionar() throws IOException {
         Task novo = showTaskDialog(null);
-        if (novo != null) service.add(novo);
+        if (novo != null) {
+            // O Service já adiciona no banco e na lista
+            service.add(novo); 
+        }
     }
 
     @FXML
     public void onEditar() throws IOException {
         Task selec = table.getSelectionModel().getSelectedItem();
         if (selec == null) return;
-        showTaskDialog(selec);
-        table.refresh();
+
+        // Abre a janela de edição
+        Task resultado = showTaskDialog(selec);
+        
+        // Se o usuário salvou a edição...
+        if (resultado != null) {
+            // AVISAMOS O BANCO DE DADOS AGORA:
+            service.update(selec); 
+            table.refresh(); // Atualiza a tela
+        }
     }
 
     @FXML
     public void onRemover(){
         Task selec = table.getSelectionModel().getSelectedItem();
         if (selec == null) return;
+        
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Remover tarefa selecionada?", ButtonType.YES, ButtonType.NO);
         Optional<ButtonType> opt = alert.showAndWait();
+        
         if (opt.isPresent() && opt.get() == ButtonType.YES){
-            service.remove(selec);
+            service.remove(selec); // Remove do banco e da lista
         }
     }
 
@@ -108,7 +120,13 @@ public class MainController {
     public void onToggleConcluida(){
         Task selec = table.getSelectionModel().getSelectedItem();
         if (selec == null) return;
+        
+        // Inverte o status na memória
         selec.setConcluida(!selec.isConcluida());
+        
+        // SALVA NO BANCO DE DADOS
+        service.update(selec); 
+        
         table.refresh();
     }
 
@@ -118,8 +136,10 @@ public class MainController {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle(toEdit == null ? "Adicionar Tarefa" : "Editar Tarefa");
         stage.setScene(new Scene(loader.load()));
+        
         TaskDialogController ctrl = loader.getController();
         if (toEdit != null) ctrl.setTask(toEdit);
+        
         stage.showAndWait();
         return ctrl.getResult();
     }
