@@ -1,0 +1,17 @@
+# Arquivos compilados (pesados e inúteis no git)
+target/
+*.class
+*.jar
+
+# Configurações do VS Code e IDEs
+.vscode/
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+bin/
+
+# Arquivos de sistema e temporários
+.DS_Store
+*.log

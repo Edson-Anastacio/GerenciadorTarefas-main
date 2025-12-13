@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.projeto.controller.MainController">
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding:10;">
+            <Label text="Gerenciador de Tarefas" style="-fx-font-size:18px; -fx-font-weight:bold;" />
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Filtrar:"/>
+            <ComboBox fx:id="filterCombo" prefWidth="120"/>
+            <Button text="Adicionar" onAction="#onAdicionar" style="-fx-padding:6 10 6 10;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="table" prefHeight="400" prefWidth="600" style="-fx-padding:10;">
+            <columns>
+                <TableColumn fx:id="colTitulo" text="Título" prefWidth="350"/>
+                <TableColumn fx:id="colPrioridade" text="Prioridade" prefWidth="120"/>
+                <TableColumn fx:id="colConcluida" text="Concluída" prefWidth="80"/>
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding:10;">
+            <Button text="Editar" fx:id="btnEditar" onAction="#onEditar"/>
+            <Button text="Remover" fx:id="btnRemover" onAction="#onRemover"/>
+            <Button text="Marcar/Desmarcar" fx:id="btnToggleConcluida" onAction="#onToggleConcluida"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Status: versão B - Checkpoint"/>
+        </HBox>
+    </bottom>
+</BorderPane>

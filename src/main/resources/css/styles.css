@@ -1,0 +1,7 @@
+.root {
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: -fx-selection-bar;
+}
