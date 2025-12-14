@@ -50,7 +50,7 @@ O sistema implementa um CRUD completo com infraestrutura automatizada:
 O projeto evoluiu para incluir a camada de acesso a dados, garantindo separação de responsabilidades:
 
 * **Model:** Representação dos dados (`Task`).
-* **View:** Interface visual (`.fxml`).
+* **View:** Interface visual (`.fxml` e CSS).
 * **Controller:** Lógica de interação com o usuário.
 * **DAO:** Acesso ao Banco de Dados e criação automática de tabelas (`TaskDAO`).
 * **Service:** Lógica de infraestrutura (`DockerService`) e regras de negócio (`TaskService`).
